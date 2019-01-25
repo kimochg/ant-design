@@ -50,6 +50,7 @@ export interface TimePickerProps {
   popupClassName?: string;
   popupStyle?: React.CSSProperties;
   suffixIcon?: React.ReactNode;
+  clearIcon?: React.ReactNode;
 }
 
 export interface TimePickerLocale {
@@ -150,7 +151,7 @@ class TimePicker extends React.Component<TimePickerProps, any> {
             <div className={`${prefixCls}-panel-addon`}>{props.addon(panel)}</div>
           ) : null;
 
-        const { suffixIcon } = props;
+        const { suffixIcon, clearIcon } = props;
         const clockIcon = (suffixIcon &&
           (React.isValidElement<{ className?: string }>(suffixIcon) ? (
             React.cloneElement(suffixIcon, {
@@ -167,13 +168,21 @@ class TimePicker extends React.Component<TimePickerProps, any> {
 
         const inputIcon = <span className={`${prefixCls}-icon`}>{clockIcon}</span>;
 
-        const clearIcon = (
-          <Icon
-            type="close-circle"
-            className={`${prefixCls}-panel-clear-btn-icon`}
-            theme="filled"
-          />
-        );
+        const finalClearIcon =
+          clearIcon && React.isValidElement<{ className?: string }>(clearIcon) ? (
+            React.cloneElement(clearIcon, {
+              className: classNames({
+                [clearIcon.props.className!]: clearIcon.props.className,
+                [`{prefixCls}-panel-clear-btn-icon`]: true,
+              }),
+            })
+          ) : (
+            <Icon
+              type="close-circle"
+              className={`${prefixCls}-panel-clear-btn-icon`}
+              theme="filled"
+            />
+          );
 
         return (
           <RcTimePicker
@@ -191,7 +200,7 @@ class TimePicker extends React.Component<TimePickerProps, any> {
             onClose={this.handleOpenClose}
             addon={addon}
             inputIcon={inputIcon}
-            clearIcon={clearIcon}
+            clearIcon={finalClearIcon}
           />
         );
       }}
